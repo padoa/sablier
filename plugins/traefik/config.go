@@ -36,6 +36,7 @@ func CreateConfig() *Config {
 		Names:           "",
 		Group:           "",
 		SessionDuration: "",
+		skipOnFail:			 false,
 		splittedNames:   []string{},
 		Dynamic:         nil,
 		Blocking:        nil,

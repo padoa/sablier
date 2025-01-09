@@ -32,7 +32,7 @@ func New(ctx context.Context, next http.Handler, config *Config, name string) (h
 		next:    next,
 		// there is no way to make blocking work in traefik without redirect so let's make it default
 		useRedirect: config.Blocking != nil,
-		skipOnFail: config.skipOnFail
+		skipOnFail: config.skipOnFail,
 	}, nil
 }
 
