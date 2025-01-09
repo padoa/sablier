@@ -15,6 +15,7 @@ type SablierMiddleware struct {
 	request     *http.Request
 	next        http.Handler
 	useRedirect bool
+	skipOnFail	bool
 }
 
 // New function creates the configuration
@@ -31,6 +32,7 @@ func New(ctx context.Context, next http.Handler, config *Config, name string) (h
 		next:    next,
 		// there is no way to make blocking work in traefik without redirect so let's make it default
 		useRedirect: config.Blocking != nil,
+		skipOnFail: config.skipOnFail
 	}, nil
 }
 
@@ -39,6 +41,10 @@ func (sm *SablierMiddleware) ServeHTTP(rw http.ResponseWriter, req *http.Request
 
 	resp, err := sm.client.Do(sablierRequest)
 	if err != nil {
+		if sm.skipOnFail {
+			sm.next.ServeHTTP(rw, req)
+			return
+		}
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
 	}

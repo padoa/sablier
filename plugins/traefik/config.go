@@ -24,6 +24,7 @@ type Config struct {
 	Names           string `yaml:"names"`
 	Group           string `yaml:"group"`
 	SessionDuration string `yaml:"sessionDuration"`
+	skipOnFail			bool `yaml:"skipOnFail"`
 	splittedNames   []string
 	Dynamic         *DynamicConfiguration  `yaml:"dynamic"`
 	Blocking        *BlockingConfiguration `yaml:"blocking"`
