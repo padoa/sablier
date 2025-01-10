@@ -12,6 +12,10 @@ import (
 	"github.com/traefik/traefik/v2/pkg/middlewares"
 )
 
+const (
+	typeName = "Sablier"
+)
+
 type SablierMiddleware struct {
 	client      *http.Client
 	request     *http.Request
