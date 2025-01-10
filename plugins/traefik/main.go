@@ -8,12 +8,6 @@ import (
 	"net"
 	"net/http"
 	"net/http/httptrace"
-	"github.com/traefik/traefik/v2/pkg/log"
-	"github.com/traefik/traefik/v2/pkg/middlewares"
-)
-
-const (
-	typeName = "Sablier"
 )
 
 type SablierMiddleware struct {
@@ -26,7 +20,6 @@ type SablierMiddleware struct {
 
 // New function creates the configuration
 func New(ctx context.Context, next http.Handler, config *Config, name string) (http.Handler, error) {
-	log.FromContext(middlewares.GetLoggerCtx(ctx, name, typeName)).Debug("Creating middleware sablier")
 	req, err := config.BuildRequest(name)
 
 	if err != nil {
