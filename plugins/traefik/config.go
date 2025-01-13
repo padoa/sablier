@@ -24,20 +24,20 @@ type Config struct {
 	Names           string `yaml:"names"`
 	Group           string `yaml:"group"`
 	SessionDuration string `yaml:"sessionDuration"`
-	skipOnFail			bool `yaml:"skipOnFail"`
+	SkipOnFail			bool `yaml:"skipOnFail"`
 	splittedNames   []string
 	Dynamic         *DynamicConfiguration  `yaml:"dynamic"`
 	Blocking        *BlockingConfiguration `yaml:"blocking"`
 }
 
 func CreateConfig() *Config {
-	fmt.Printf("Creating new config sablier")
+	
 	return &Config{
 		SablierURL:      "http://sablier:10000",
 		Names:           "",
 		Group:           "",
 		SessionDuration: "",
-		skipOnFail:			 false,
+		SkipOnFail:			 false,
 		splittedNames:   []string{},
 		Dynamic:         nil,
 		Blocking:        nil,
@@ -45,7 +45,9 @@ func CreateConfig() *Config {
 }
 
 func (c *Config) BuildRequest(middlewareName string) (*http.Request, error) {
-
+	logger := createLogger(true)
+	logger.Debug(fmt.Sprintf("Sablier retry on fail is set to : %b", c.SkipOnFail))
+	logger.Debug(fmt.Sprintf("Sablier group is set to : %s", c.Group))
 	if len(c.SablierURL) == 0 {
 		return nil, fmt.Errorf("sablierURL cannot be empty")
 	}

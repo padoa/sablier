@@ -42,7 +42,7 @@ func New(ctx context.Context, next http.Handler, config *Config, name string) (h
 		next:    next,
 		// there is no way to make blocking work in traefik without redirect so let's make it default
 		useRedirect: config.Blocking != nil,
-		skipOnFail: config.skipOnFail,
+		skipOnFail: config.SkipOnFail,
 	}, nil
 }
 
@@ -50,7 +50,7 @@ func (sm *SablierMiddleware) ServeHTTP(rw http.ResponseWriter, req *http.Request
 	logger := createLogger(true)
 	sablierRequest := sm.request.Clone(context.TODO())
 
-	logger.Debug(fmt.Sprintf("Sablier retry on fail is set to : %s", sm.skipOnFail))
+	logger.Debug(fmt.Sprintf("Sablier retry on fail is set to : %t", sm.skipOnFail))
 
 	resp, err := sm.client.Do(sablierRequest)
 	if err != nil {
