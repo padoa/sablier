@@ -56,7 +56,7 @@ func (sm *SablierMiddleware) ServeHTTP(rw http.ResponseWriter, req *http.Request
 	if err != nil {
 		if sm.skipOnFail {
 			logger.Debug("Sablier has skipped the error")
-			logger.Debug(sm.next)
+			logger.Debug(fmt.Sprintf("%#v", sm.next))
 			sm.next.ServeHTTP(rw, req)
 			return
 		}
