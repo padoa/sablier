@@ -31,6 +31,7 @@ type Config struct {
 }
 
 func CreateConfig() *Config {
+	fmt.Printf("Creating new config sablier")
 	return &Config{
 		SablierURL:      "http://sablier:10000",
 		Names:           "",
