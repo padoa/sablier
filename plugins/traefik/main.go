@@ -50,9 +50,7 @@ func (sm *SablierMiddleware) ServeHTTP(rw http.ResponseWriter, req *http.Request
 	logger := createLogger(true)
 	sablierRequest := sm.request.Clone(context.TODO())
 
-	configMap := structToMap(sm)
-
-	logger.Debug("SablierMiddleware config map", configMap)
+	logger.Debug(fmt.Sprintf("Sablier retry on fail is set to : %s", sm.skipOnFail))
 
 	resp, err := sm.client.Do(sablierRequest)
 	if err != nil {
