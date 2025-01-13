@@ -10,6 +10,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptrace"
+	"reflect"
 )
 
 type SablierMiddleware struct {
@@ -18,10 +19,6 @@ type SablierMiddleware struct {
 	next        http.Handler
 	useRedirect bool
 	skipOnFail	bool
-}
-
-func printJson(payload map[string]interface{}) {
-	json.NewEncoder(os.Stdout).Encode(payload)
 }
 
 // New function creates the configuration
@@ -157,4 +154,32 @@ func (r *responseWriter) Flush() {
 	if flusher, ok := r.responseWriter.(http.Flusher); ok {
 		flusher.Flush()
 	}
+}
+
+func structToMap(input interface{}) map[string]interface{} {
+	result := make(map[string]interface{})
+	v := reflect.ValueOf(input)
+	if v.Kind() == reflect.Ptr {
+		v = v.Elem()
+	}
+
+	for i := 0; i < v.NumField(); i++ {
+		field := v.Field(i)
+		fieldName := v.Type().Field(i).Name
+		fieldValue := field.Interface()
+
+		if field.Kind() == reflect.Struct {
+			result[fieldName] = structToMap(fieldValue)
+		} else if field.Kind() == reflect.Ptr && !field.IsNil() {
+			result[fieldName] = structToMap(field.Elem().Interface())
+		} else {
+			result[fieldName] = fieldValue
+		}
+	}
+
+	return result
+}
+
+func printJson(payload map[string]interface{}) {
+	json.NewEncoder(os.Stdout).Encode(payload)
 }
