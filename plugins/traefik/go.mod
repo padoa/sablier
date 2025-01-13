@@ -1,3 +1,3 @@
-module github.com/sablierapp/sablier/plugins/traefik
+module github.com/padoa/sablier/plugins/traefik
 
 go 1.22.3

@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"io"
 	"net"
+	"os"
+	"encoding/json"
 	"net/http"
 	"net/http/httptrace"
 )
@@ -18,9 +20,14 @@ type SablierMiddleware struct {
 	skipOnFail	bool
 }
 
+func printJson(payload map[string]interface{}) {
+	json.NewEncoder(os.Stdout).Encode(payload)
+}
+
 // New function creates the configuration
 func New(ctx context.Context, next http.Handler, config *Config, name string) (http.Handler, error) {
 	req, err := config.BuildRequest(name)
+	printJson(config)
 
 	if err != nil {
 		return nil, err
