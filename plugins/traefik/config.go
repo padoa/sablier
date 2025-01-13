@@ -46,8 +46,7 @@ func CreateConfig() *Config {
 
 func (c *Config) BuildRequest(middlewareName string) (*http.Request, error) {
 	logger := createLogger(true)
-	logger.Debug(fmt.Sprintf("Sablier retry on fail is set to : %t in the config file", c.SkipOnFail))
-	logger.Debug(fmt.Sprintf("Sablier group is set to : %s", c.Group))
+	logger.Debug(fmt.Sprintf("Sablier skip on fail is set to : %t in the config file", c.SkipOnFail))
 	if len(c.SablierURL) == 0 {
 		return nil, fmt.Errorf("sablierURL cannot be empty")
 	}
