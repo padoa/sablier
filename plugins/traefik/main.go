@@ -7,11 +7,11 @@ import (
 	"io"
 	"net"
 	"os"
+	"log/slog"
 	"encoding/json"
 	"net/http"
 	"net/http/httptrace"
 	"reflect"
-	"github.com/traefik/traefik/v2/pkg/log"
 )
 
 type SablierMiddleware struct {
