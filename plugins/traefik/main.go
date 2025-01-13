@@ -24,13 +24,13 @@ type SablierMiddleware struct {
 
 // New function creates the configuration
 func New(ctx context.Context, next http.Handler, config *Config, name string) (http.Handler, error) {
-	logger := log.FromContext(ctx)
+	logger := createLogger(true)
 
 	req, err := config.BuildRequest(name)
 
 	configMap := structToMap(config)
 
-	logger.Debug("Configuration map", "config", configMap)
+	logger.Debug("Sablier config map", configMap)
 
 	if err != nil {
 		return nil, err
@@ -191,4 +191,16 @@ func structToMap(input interface{}) map[string]interface{} {
 	}
 
 	return result
+}
+
+const pluginName = "sablier"
+
+func createLogger(isDebugModeEnabled bool) *slog.Logger {
+	loggerOpts := &slog.HandlerOptions{
+		Level: slog.LevelInfo,
+	}
+	if isDebugModeEnabled {
+		loggerOpts.Level = slog.LevelDebug
+	}
+	return slog.New(slog.NewJSONHandler(os.Stdout, loggerOpts)).With("plugin", pluginName)
 }
