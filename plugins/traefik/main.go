@@ -156,6 +156,7 @@ func (r *responseWriter) Flush() {
 	}
 }
 
+// structToMap converts a struct to a map[string]interface{}
 func structToMap(input interface{}) map[string]interface{} {
 	result := make(map[string]interface{})
 	v := reflect.ValueOf(input)
@@ -163,9 +164,16 @@ func structToMap(input interface{}) map[string]interface{} {
 		v = v.Elem()
 	}
 
+	t := v.Type()
 	for i := 0; i < v.NumField(); i++ {
 		field := v.Field(i)
-		fieldName := v.Type().Field(i).Name
+		fieldName := t.Field(i).Name
+
+		// Skip unexported fields
+		if !field.CanInterface() {
+			continue
+		}
+
 		fieldValue := field.Interface()
 
 		if field.Kind() == reflect.Struct {
