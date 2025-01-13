@@ -1,6 +1,7 @@
 package traefik
 
 import (
+	"fmt"
 	"bufio"
 	"context"
 	"fmt"
@@ -20,6 +21,7 @@ type SablierMiddleware struct {
 
 // New function creates the configuration
 func New(ctx context.Context, next http.Handler, config *Config, name string) (http.Handler, error) {
+	fmt.Printf("Creating new sablier middleware")
 	req, err := config.BuildRequest(name)
 
 	if err != nil {
