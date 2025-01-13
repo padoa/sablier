@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"net/http/httptrace"
 	"reflect"
+	"github.com/traefik/traefik/v2/pkg/log"
 )
 
 type SablierMiddleware struct {
@@ -23,9 +24,13 @@ type SablierMiddleware struct {
 
 // New function creates the configuration
 func New(ctx context.Context, next http.Handler, config *Config, name string) (http.Handler, error) {
+	logger := log.FromContext(ctx)
+
 	req, err := config.BuildRequest(name)
+
 	configMap := structToMap(config)
-	printJson(configMap)
+
+	logger.Debug("Configuration map", "config", configMap)
 
 	if err != nil {
 		return nil, err
@@ -186,8 +191,4 @@ func structToMap(input interface{}) map[string]interface{} {
 	}
 
 	return result
-}
-
-func printJson(payload map[string]interface{}) {
-	json.NewEncoder(os.Stdout).Encode(payload)
 }
