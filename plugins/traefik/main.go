@@ -47,7 +47,12 @@ func New(ctx context.Context, next http.Handler, config *Config, name string) (h
 }
 
 func (sm *SablierMiddleware) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
+	logger := createLogger(true)
 	sablierRequest := sm.request.Clone(context.TODO())
+
+	configMap := structToMap(sm)
+
+	logger.Debug("SablierMiddleware config map", configMap)
 
 	resp, err := sm.client.Do(sablierRequest)
 	if err != nil {
