@@ -5,9 +5,11 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"log/slog"
 	"net"
 	"net/http"
 	"net/http/httptrace"
+	"os"
 )
 
 type SablierMiddleware struct {
@@ -15,12 +17,12 @@ type SablierMiddleware struct {
 	request     *http.Request
 	next        http.Handler
 	useRedirect bool
+	skipOnFail  bool
 }
 
 // New function creates the configuration
 func New(ctx context.Context, next http.Handler, config *Config, name string) (http.Handler, error) {
 	req, err := config.BuildRequest(name)
-
 	if err != nil {
 		return nil, err
 	}
@@ -31,15 +33,23 @@ func New(ctx context.Context, next http.Handler, config *Config, name string) (h
 		next:    next,
 		// there is no way to make blocking work in traefik without redirect so let's make it default
 		useRedirect: config.Blocking != nil,
+		skipOnFail:  config.SkipOnFail,
 	}, nil
 }
 
 func (sm *SablierMiddleware) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
+	logger := createLogger(true)
 	sablierRequest := sm.request.Clone(context.TODO())
 
 	resp, err := sm.client.Do(sablierRequest)
 	if err != nil {
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if sm.skipOnFail && resp.StatusCode >= 500 {
+		logger.Warn("Sablier has skipped the error")
+		sm.next.ServeHTTP(rw, req)
 		return
 	}
 
@@ -143,4 +153,16 @@ func (r *responseWriter) Flush() {
 	if flusher, ok := r.responseWriter.(http.Flusher); ok {
 		flusher.Flush()
 	}
+}
+
+const pluginName = "sablier"
+
+func createLogger(isDebugModeEnabled bool) *slog.Logger {
+	loggerOpts := &slog.HandlerOptions{
+		Level: slog.LevelInfo,
+	}
+	if isDebugModeEnabled {
+		loggerOpts.Level = slog.LevelDebug
+	}
+	return slog.New(slog.NewJSONHandler(os.Stdout, loggerOpts)).With("plugin", pluginName)
 }
