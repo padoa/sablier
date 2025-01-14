@@ -67,7 +67,7 @@ func (sm *SablierMiddleware) ServeHTTP(rw http.ResponseWriter, req *http.Request
 
 	b, err := io.ReadAll(resp.Body)
 	if err != nil {
-		logger.Error(err)
+		logger.Error(err.Error())
 	}
 
 	logger.Debug(fmt.Sprintf("La réponse du service sablier est: %s", string(b)))
