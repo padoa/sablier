@@ -25,14 +25,7 @@ type SablierMiddleware struct {
 
 // New function creates the configuration
 func New(ctx context.Context, next http.Handler, config *Config, name string) (http.Handler, error) {
-	logger := createLogger(true)
-
 	req, err := config.BuildRequest(name)
-
-	configMap := structToMap(config)
-
-	logger.Debug("Sablier config map", configMap)
-
 	if err != nil {
 		return nil, err
 	}
@@ -50,8 +43,6 @@ func New(ctx context.Context, next http.Handler, config *Config, name string) (h
 func (sm *SablierMiddleware) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	logger := createLogger(true)
 	sablierRequest := sm.request.Clone(context.TODO())
-
-	logger.Debug(fmt.Sprintf("Sablier skip on fail is set to : %t in the main file", sm.skipOnFail))
 
 	resp, err := sm.client.Do(sablierRequest)
 	if err != nil {
@@ -165,38 +156,6 @@ func (r *responseWriter) Flush() {
 	if flusher, ok := r.responseWriter.(http.Flusher); ok {
 		flusher.Flush()
 	}
-}
-
-// structToMap converts a struct to a map[string]interface{}
-func structToMap(input interface{}) map[string]interface{} {
-	result := make(map[string]interface{})
-	v := reflect.ValueOf(input)
-	if v.Kind() == reflect.Ptr {
-		v = v.Elem()
-	}
-
-	t := v.Type()
-	for i := 0; i < v.NumField(); i++ {
-		field := v.Field(i)
-		fieldName := t.Field(i).Name
-
-		// Skip unexported fields
-		if !field.CanInterface() {
-			continue
-		}
-
-		fieldValue := field.Interface()
-
-		if field.Kind() == reflect.Struct {
-			result[fieldName] = structToMap(fieldValue)
-		} else if field.Kind() == reflect.Ptr && !field.IsNil() {
-			result[fieldName] = structToMap(field.Elem().Interface())
-		} else {
-			result[fieldName] = fieldValue
-		}
-	}
-
-	return result
 }
 
 const pluginName = "sablier"
