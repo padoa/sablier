@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"bytes"
 	"net"
 	"os"
 	"log/slog"
@@ -108,7 +109,7 @@ func (sm *SablierMiddleware) ServeHTTP(rw http.ResponseWriter, req *http.Request
 			}
 		} else {
 			conditonalResponseWriter.Header().Set("Content-Type", resp.Header.Get("Content-Type"))
-			io.Copy(conditonalResponseWriter, resp.Body)
+			io.Copy(conditonalResponseWriter, bytes.NewReader(b))
 		}
 	}
 }
