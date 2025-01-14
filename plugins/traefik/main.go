@@ -55,23 +55,17 @@ func (sm *SablierMiddleware) ServeHTTP(rw http.ResponseWriter, req *http.Request
 
 	resp, err := sm.client.Do(sablierRequest)
 	if err != nil {
-		if sm.skipOnFail {
-			logger.Debug("Sablier has skipped the error")
-			sm.next.ServeHTTP(rw, req)
-			return
-		}
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	logger.Debug(fmt.Sprintf("Le status de la réponse du service sablier est: %s", resp.Status))
-	defer resp.Body.Close()
 
-	b, err := io.ReadAll(resp.Body)
-	if err != nil {
-		logger.Error(err.Error())
+	if resp.StatusCode >= 500 && sm.skipOnFail {
+		logger.Debug("Sablier has skipped the error")
+		sm.next.ServeHTTP(rw, req)
+		return
 	}
-
-	logger.Debug(fmt.Sprintf("La réponse du service sablier est: %s", string(b)))
+	
+	defer resp.Body.Close()
 
 	conditonalResponseWriter := newResponseWriter(rw)
 
@@ -109,7 +103,7 @@ func (sm *SablierMiddleware) ServeHTTP(rw http.ResponseWriter, req *http.Request
 			}
 		} else {
 			conditonalResponseWriter.Header().Set("Content-Type", resp.Header.Get("Content-Type"))
-			io.Copy(conditonalResponseWriter, bytes.NewReader(b))
+			io.Copy(conditonalResponseWriter, resp.Body)
 		}
 	}
 }
