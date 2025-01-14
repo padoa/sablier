@@ -5,11 +5,11 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"net"
-	"os"
 	"log/slog"
+	"net"
 	"net/http"
 	"net/http/httptrace"
+	"os"
 )
 
 type SablierMiddleware struct {
@@ -17,7 +17,7 @@ type SablierMiddleware struct {
 	request     *http.Request
 	next        http.Handler
 	useRedirect bool
-	skipOnFail	bool
+	skipOnFail  bool
 }
 
 // New function creates the configuration
@@ -33,7 +33,7 @@ func New(ctx context.Context, next http.Handler, config *Config, name string) (h
 		next:    next,
 		// there is no way to make blocking work in traefik without redirect so let's make it default
 		useRedirect: config.Blocking != nil,
-		skipOnFail: config.SkipOnFail,
+		skipOnFail:  config.SkipOnFail,
 	}, nil
 }
 
@@ -47,12 +47,12 @@ func (sm *SablierMiddleware) ServeHTTP(rw http.ResponseWriter, req *http.Request
 		return
 	}
 
-	if resp.StatusCode >= 500 && sm.skipOnFail {
-		logger.Debug("Sablier has skipped the error")
+	if sm.skipOnFail && resp.StatusCode >= 500 {
+		logger.Warn("Sablier has skipped the error")
 		sm.next.ServeHTTP(rw, req)
 		return
 	}
-	
+
 	defer resp.Body.Close()
 
 	conditonalResponseWriter := newResponseWriter(rw)
