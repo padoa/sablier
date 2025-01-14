@@ -31,7 +31,6 @@ type Config struct {
 }
 
 func CreateConfig() *Config {
-	
 	return &Config{
 		SablierURL:      "http://sablier:10000",
 		Names:           "",
@@ -45,6 +44,7 @@ func CreateConfig() *Config {
 }
 
 func (c *Config) BuildRequest(middlewareName string) (*http.Request, error) {
+	
 	if len(c.SablierURL) == 0 {
 		return nil, fmt.Errorf("sablierURL cannot be empty")
 	}

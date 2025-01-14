@@ -5,14 +5,11 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"bytes"
 	"net"
 	"os"
 	"log/slog"
-	"encoding/json"
 	"net/http"
 	"net/http/httptrace"
-	"reflect"
 )
 
 type SablierMiddleware struct {
