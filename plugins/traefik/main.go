@@ -62,7 +62,7 @@ func (sm *SablierMiddleware) ServeHTTP(rw http.ResponseWriter, req *http.Request
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
+	logger.Debug(string(resp.Body.Read()))
 	defer resp.Body.Close()
 
 	conditonalResponseWriter := newResponseWriter(rw)
