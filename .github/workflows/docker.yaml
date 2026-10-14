@@ -18,7 +18,7 @@ env:
 jobs:
   build:
     name: Build Sablier Docker image
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     strategy:
       fail-fast: false
       matrix:
@@ -121,7 +121,7 @@ jobs:
 
   merge:
     name: Merge and Publish multiarch
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     needs:
       - build
     steps:
