@@ -13,7 +13,7 @@ permissions:
 jobs:
   build:
     name: Build Sablier docker image once and share it to E2E jobs
-    runs-on: ubuntu-26.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
@@ -37,7 +37,7 @@ jobs:
 
   traefik:
     name: Build Traefik Sablier Plugin
-    runs-on: ubuntu-26.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout code
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
@@ -56,7 +56,7 @@ jobs:
 
   traefik_e2e:
     name: Run Sablier E2E tests for Traefik middleware
-    runs-on: ubuntu-26.04
+    runs-on: ubuntu-24.04
     needs: build
     strategy:
       fail-fast: false
@@ -91,7 +91,7 @@ jobs:
 
   nginx_e2e:
     name: Run Sablier E2E tests for Nginx NJS module with Sablier
-    runs-on: ubuntu-26.04
+    runs-on: ubuntu-24.04
     needs: build
     strategy:
       fail-fast: false
@@ -128,7 +128,7 @@ jobs:
 
   caddy:
     name: Build Caddy Sablier Plugin
-    runs-on: ubuntu-26.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout code
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
@@ -147,7 +147,7 @@ jobs:
 
   build-caddy:
     name: Build Caddy docker image once and share it to Caddy E2E jobs
-    runs-on: ubuntu-26.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
@@ -171,7 +171,7 @@ jobs:
 
   caddy_e2e:
     name: Run Sablier E2E tests for Caddy middleware
-    runs-on: ubuntu-26.04
+    runs-on: ubuntu-24.04
     needs: 
       - build
       - build-caddy
@@ -216,7 +216,7 @@ jobs:
 
   build-proxywasm:
     name: Build ProxyWasm Plugin once and share it to ProxyWasm E2E jobs
-    runs-on: ubuntu-26.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
@@ -237,7 +237,7 @@ jobs:
 
   proxywasm_apisix_e2e:
     name: Run Sablier E2E tests for Proxywasm middleware on Apache APISIX
-    runs-on: ubuntu-26.04
+    runs-on: ubuntu-24.04
     needs:
       - build
       - build-proxywasm
@@ -279,7 +279,7 @@ jobs:
 
   proxywasm_envoy_e2e:
     name: Run Sablier E2E tests for Proxywasm middleware on Envoy
-    runs-on: ubuntu-26.04
+    runs-on: ubuntu-24.04
     needs:
       - build
       - build-proxywasm
@@ -321,7 +321,7 @@ jobs:
 
   proxywasm_nginx_e2e:
     name: Run Sablier E2E tests for Proxywasm middleware on Nginx
-    runs-on: ubuntu-26.04
+    runs-on: ubuntu-24.04
     needs:
       - build
       - build-proxywasm
